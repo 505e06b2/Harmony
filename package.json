@@ -1,0 +1,18 @@
+{
+  "name": "selfbot_discord",
+  "version": "1.0.0",
+  "description": "Daemonised selfbot lib",
+  "main": "main.js",
+  "dependencies": {
+    "bufferutil": "^4.0.3",
+    "node-fetch": "^2.6.1",
+    "node-gyp-build": "^4.2.3",
+    "utf-8-validate": "^5.0.5",
+    "ws": "^8.2.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "505e06b2",
+  "license": "ISC"
+}
