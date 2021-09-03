@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Authorization");
 header("Cache-Control: no-store");
 
-if($_SERVER["REQUEST_URI"] == "/") {
+if(empty($_SERVER["QUERY_STRING"])) {
 	header("content-type: application/json");
 	die('{"code": 0, "message": "No path given"}');
 }
@@ -30,7 +30,7 @@ $headers = [ //needs to be mutable so content-type can be added when needed
 	"sec-fetch-site: same-origin",
 ];
 
-$ch = curl_init(BASE_URL . $_SERVER["REQUEST_URI"]);
+$ch = curl_init(BASE_URL . $_SERVER["QUERY_STRING"]);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HEADER, false);
 switch($_SERVER["REQUEST_METHOD"]) {

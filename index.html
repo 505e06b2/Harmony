@@ -13,10 +13,10 @@
 			};
 
 			window.onload = async () => {
-				document.body.innerText = await (await fetch("http://localhost:8080/channels/878012207953227780/messages", {
+				document.body.innerText = await (await fetch("http://localhost:8080/?channels/878012207953227780/messages", {
 					method: "POST",
 					headers: {
-						"authorization": localStorage.authorization
+						"authorization": localStorage.authorization || ""
 					},
 					body: JSON.stringify({content: "Worked bruva", nonce: generateSnowflake(), tts: false})
 				})).text();
