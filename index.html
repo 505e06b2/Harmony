@@ -1,5 +1,27 @@
 <!DOCTYPE html>
-<html>
-	<head></head>
-	<body>HTML</body>
+<html> <!-- Used by Github pages -->
+	<head>
+		<script>
+			const generateSnowflake = () => {
+				const epoch = (new Date("2015-01-01")).getTime();
+				let ret = BigInt(0);
+				ret = ret + (BigInt((new Date()).getTime() - epoch) << 22n);
+				ret = ret + (BigInt(1) << 17n);
+				ret = ret + (BigInt(1) << 12n);
+				ret = ret + BigInt(Math.floor(Math.random() * Math.floor(0xfff)));
+				return ret.toString();
+			};
+
+			window.onload = async () => {
+				document.body.innerText = await (await fetch("http://localhost:8080/channels/878012207953227780/messages", {
+					method: "POST",
+					headers: {
+						"authorization": localStorage.authorization
+					},
+					body: JSON.stringify({content: "Worked bruva", nonce: generateSnowflake(), tts: false})
+				})).text();
+			}
+		</script>
+	</head>
+	<body></body>
 </html>
