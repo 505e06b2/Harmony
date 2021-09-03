@@ -111,8 +111,7 @@ function parseMessage(text) {
 	replaceAllMatches(/^&gt;.*?$/mg, '<span class="greentext">${x}</span>'); //greentext
 	replaceAllMatches(/^&lt;.*?$/mg, '<span class="redtext">${x}</span>'); //redtext
 
-	text = text.replace(/\n/gm, "<br>");
-	return text.trim();
+	return text.trim().replace(/\n/gm, "<br>");
 }
 
 function appendMessage(message) {
