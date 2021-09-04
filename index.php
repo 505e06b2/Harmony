@@ -1,13 +1,7 @@
 <?php
 //This file is used by Heroku
-if(empty($_SERVER["HTTP_REFERER"])) die('{"code": 0, "message": "No referer"}');
-
-$origin_parts = parse_url($_SERVER["HTTP_REFERER"]);
-$origin = $origin_parts["scheme"] . "://" . $origin_parts["host"];
-if(!empty($origin_parts["port"])) $origin = $origin . ":" . $origin_parts["port"];
-header("Access-Control-Allow-Origin: " . $origin);
-header("Access-Control-Allow-Headers: *, Authorization, Content-Type");
-header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: *");
 header("Cache-Control: no-store");
 
 if(empty($_SERVER["QUERY_STRING"])) {
@@ -15,7 +9,7 @@ if(empty($_SERVER["QUERY_STRING"])) {
 	die('{"code": 0, "message": "No path given"}');
 }
 
-if(empty($_SERVER["HTTP_AUTHORIZATION"])) {
+if(empty($_SERVER["HTTP_X_AUTHORIZATION"])) {
 	header("content-type: application/json");
 	die('{"code": 0, "message": "No Authorization header given"}');
 }
@@ -26,7 +20,7 @@ const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 $headers = [ //needs to be mutable so content-type can be added when needed
 	"accept: */*",
 	"accept-language: en-US",
-	"authorization: " . $_SERVER["HTTP_AUTHORIZATION"],
+	"authorization: " . $_SERVER["HTTP_X_AUTHORIZATION"],
 	"cache-control: no-cache",
 	"pragma: no-cache",
 	"sec-ch-ua: \" Not A;Brand\";v=\"99\", \"Chromium\";v=\"92\"",
@@ -46,7 +40,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
 	case "POST":
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input")); //get this streamable?, at least for POST
-		$headers[] = "content-type: " . $_SERVER["HTTP_CONTENT_TYPE"];
+		$headers[] = "content-type: " . $_SERVER["HTTP_X_CONTENT_TYPE"]; //USE SOMETHING ELSE NOT BLOCKED BY CORS LOL
 		break;
 
 	default:
