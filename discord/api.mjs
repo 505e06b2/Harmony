@@ -12,7 +12,9 @@ export function api(parent) {
 			headers: Object.assign({
 				"authorization": localStorage.authorization
 			}, headers),
-			body: body
+			body: body,
+			mode: "cors",
+			cache: "no-cache"
 		});
 		return await r.text(); //no need for text()?
 	};
