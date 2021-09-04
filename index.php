@@ -40,7 +40,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
 	case "POST":
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input")); //get this streamable?, at least for POST
-		$headers[] = "content-type: " . $_SERVER["HTTP_X_CONTENT_TYPE"]; //USE SOMETHING ELSE NOT BLOCKED BY CORS LOL
+		$headers[] = "content-type: " . empty($_SERVER["HTTP_X_CONTENT_TYPE"]) ? "application/json" : $_SERVER["HTTP_X_CONTENT_TYPE"]; //bypass CORS with x-*
 		break;
 
 	default:

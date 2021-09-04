@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html> <!-- Used by Github pages -->
 	<head>
-		<script type="module" src="discord/index.mjs"></script>
+		<script>
+			window.onload = async () => {
+				window.discord = new (await import("./discord/index.mjs")).Discord();
+				console.log(await discord.api.getMessages("878012207953227780"));
+			};
+		</script>
 	</head>
 	<body></body>
 </html>
