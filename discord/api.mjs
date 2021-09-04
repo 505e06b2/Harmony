@@ -1,5 +1,3 @@
-const api_base = (location.hostname === "localhost") ? "http://localhost:8080/?" : "https://io-discord-eu1.herokuapp.com/?";
-
 export function api(parent) {
 	this.send = async (channel_id, message) => await this.raw(
 		`channels/${channel_id}/messages`,
@@ -9,14 +7,14 @@ export function api(parent) {
 	);
 
 	this.raw = async (path, method="GET", headers={}, body=null) => {
-		const r = await fetch(api_base + path, {
+		const r = await fetch(parent.api_base + path, {
 			method: "POST",
 			headers: Object.assign({
 				"authorization": localStorage.authorization
 			}, headers),
 			body: body
 		});
-		return await r.json(); //no need for text()?
+		return await r.text(); //no need for text()?
 	};
 }
 

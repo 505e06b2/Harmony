@@ -18,6 +18,7 @@ function Discord() {
 		return ret.toString();
 	};
 
+	this.api_base = (location.hostname === "localhost") ? "http://localhost:8080/?" : "https://io-discord-eu1.herokuapp.com/?";
 	this.api = new api(this);
 }
 

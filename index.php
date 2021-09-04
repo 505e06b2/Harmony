@@ -4,6 +4,8 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *, Authorization");
 header("Cache-Control: no-store");
 
+die($_SERVER["HTTP_CONTENT_TYPE"]);
+
 if(empty($_SERVER["QUERY_STRING"])) {
 	header("content-type: application/json");
 	die('{"code": 0, "message": "No path given"}');
