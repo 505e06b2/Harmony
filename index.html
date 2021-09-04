@@ -3,7 +3,7 @@
 	<head>
 		<script>
 			window.onload = async () => {
-				window.discord = new (await import("./discord/index.mjs")).Discord();
+				window.discord = new (await import("./js/discord/index.mjs")).Discord();
 				console.log(await discord.api.getMessages("878012207953227780"));
 			};
 		</script>
