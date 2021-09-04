@@ -14,8 +14,10 @@ export function api(parent) {
 			}, headers),
 			body: body,
 			mode: "cors",
-			cache: "no-cache"
+			cache: "no-cache",
+			credentials: "include"
 		});
+		console.log(r);
 		return await r.text(); //no need for text()?
 	};
 }

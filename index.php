@@ -1,10 +1,14 @@
 <?php
 //This file is used by Heroku
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *, Authorization");
-header("Cache-Control: no-store");
+if(empty($_SERVER["HTTP_REFERER"])) die('{"code": 0, "message": "No referer"}');
 
-die($_SERVER["HTTP_CONTENT_TYPE"]);
+$origin_parts = parse_url($_SERVER["HTTP_REFERER"]);
+$origin = $origin_parts["scheme"] . "://" . $origin_parts["host"];
+if(!empty($origin_parts["port"])) $origin = $origin . ":" . $origin_parts["port"];
+header("Access-Control-Allow-Origin: " . $origin);
+header("Access-Control-Allow-Headers: *, Authorization, Content-Type");
+header("Access-Control-Allow-Credentials: true");
+header("Cache-Control: no-store");
 
 if(empty($_SERVER["QUERY_STRING"])) {
 	header("content-type: application/json");
