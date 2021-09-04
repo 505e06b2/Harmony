@@ -4,7 +4,12 @@
 		<script>
 			window.onload = async () => {
 				window.discord = new (await import("./js/discord/index.mjs")).Discord();
-				console.log(await discord.api.getMessages("878012207953227780"));
+				discord.on("READY", async (s) => {
+					for(const x of discord.state.guilds) {
+						const guild = await discord.api.getGuildDetails(x.id);
+						document.body.innerHTML += `<img src="${await discord.api.getGuildIconURL(guild)}"> ${guild.name}<br>`;
+					}
+				});
 			};
 		</script>
 	</head>

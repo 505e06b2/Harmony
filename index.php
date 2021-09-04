@@ -1,5 +1,7 @@
 <?php
 //This file is used by Heroku
+const BASE_URL = "https://discord.com/api/v9/";
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header("Cache-Control: no-store");
@@ -14,13 +16,16 @@ if(empty($_SERVER["HTTP_X_AUTHORIZATION"])) {
 	die('{"code": 0, "message": "No Authorization header given"}');
 }
 
-const BASE_URL = "https://discord.com/api/v9/";
-const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36";
+if(empty($_SERVER["HTTP_X_USER_AGENT"])) {
+	header("content-type: application/json");
+	die('{"code": 0, "message": "No User-Agent header given"}');
+}
 
 $headers = [ //needs to be mutable so content-type can be added when needed
 	"accept: */*",
 	"accept-language: en-US",
 	"authorization: " . $_SERVER["HTTP_X_AUTHORIZATION"],
+	"user-agent: " . $_SERVER["HTTP_X_USER_AGENT"],
 	"cache-control: no-cache",
 	"pragma: no-cache",
 	"sec-ch-ua: \" Not A;Brand\";v=\"99\", \"Chromium\";v=\"92\"",

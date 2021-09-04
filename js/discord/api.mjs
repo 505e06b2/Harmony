@@ -1,4 +1,9 @@
+const cdn_base_url = "https://cdn.discordapp.com/";
+
 export function api(parent) {
+	this.getGuildDetails = async (guild_id) => await this.raw(`guilds/${guild_id}`);
+	this.getGuildIconURL = async (guild_object, format = "png") => `${cdn_base_url}icons/${guild_object.id}/${guild_object.icon}.${format}`;
+
 	this.getMessages = async (channel_id) => await this.raw(`channels/${channel_id}/messages?limit=50`);
 
 	this.send = async (channel_id, message) => await this.raw(`channels/${channel_id}/messages`, "POST",
@@ -10,6 +15,7 @@ export function api(parent) {
 		const r = await fetch(parent.api_base + path, {
 			method: method,
 			headers: Object.assign({
+				"x-user-agent": this.user_agent,
 				"x-authorization": localStorage.authorization
 			}, headers),
 			body: body,

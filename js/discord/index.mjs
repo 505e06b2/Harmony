@@ -1,4 +1,5 @@
 import api from "./api.mjs";
+import gateway from "./gateway.mjs";
 
 export function Discord() {
 	while(!localStorage.authorization) {
@@ -18,6 +19,10 @@ export function Discord() {
 		return ret.toString();
 	};
 
+	this.user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36";
 	this.api_base = (location.hostname === "localhost") ? "http://localhost:8080/?" : "https://io-discord-eu1.herokuapp.com/?";
 	this.api = new api(this);
+	this.gateway = new gateway(this);
+		//this.on
+		//this.state
 }
