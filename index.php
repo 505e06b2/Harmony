@@ -1,7 +1,7 @@
 <?php
 //This file is used by Heroku
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Authorization");
+header("Access-Control-Allow-Headers: *, Authorization");
 header("Cache-Control: no-store");
 
 if(empty($_SERVER["QUERY_STRING"])) {
@@ -39,8 +39,8 @@ switch($_SERVER["REQUEST_METHOD"]) {
 
 	case "POST":
 		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
-		$headers[] = "content-type: application/json";
+		curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input")); //get this streamable?, at least for POST
+		$headers[] = "content-type: " . $_SERVER["HTTP_CONTENT_TYPE"];
 		break;
 
 	default:
