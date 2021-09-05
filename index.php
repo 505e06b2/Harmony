@@ -24,8 +24,7 @@ if(empty($_SERVER["HTTP_X_USER_AGENT"])) {
 $headers = [ //needs to be mutable so content-type can be added when needed
 	"accept: */*",
 	"accept-language: en-US",
-	"authorization: " . $_SERVER["HTTP_X_AUTHORIZATION"],
-	"user-agent: " . $_SERVER["HTTP_X_USER_AGENT"],
+	"authorization: " . $_SERVER["HTTP_X_AUTHORIZATION"]
 	"cache-control: no-cache",
 	"pragma: no-cache",
 	"sec-ch-ua: \" Not A;Brand\";v=\"99\", \"Chromium\";v=\"92\"",
@@ -52,7 +51,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
 		die('{"code": 0, "message": "HTTP method not supported"}');
 }
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-curl_setopt($ch, CURLOPT_USERAGENT, USER_AGENT);
+curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER["HTTP_X_USER_AGENT"]);
 
 $data = curl_exec($ch);
 curl_close($ch);

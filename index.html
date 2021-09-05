@@ -7,7 +7,8 @@
 				discord.on("READY", async (s) => {
 					for(const x of discord.state.guilds) {
 						const guild = await discord.api.getGuildDetails(x.id);
-						document.body.innerHTML += `<img src="${await discord.api.getGuildIconURL(guild)}"> ${guild.name}<br>`;
+						const icon_src = await discord.api.getGuildIconURL(guild);
+						document.body.innerHTML += `<img src="${icon_src}"> ${guild.name}<br>`;
 					}
 				});
 			};
