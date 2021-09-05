@@ -24,7 +24,7 @@ if(empty($_SERVER["HTTP_X_USER_AGENT"])) {
 $headers = [ //needs to be mutable so content-type can be added when needed
 	"accept: */*",
 	"accept-language: en-US",
-	"authorization: " . $_SERVER["HTTP_X_AUTHORIZATION"]
+	"authorization: " . $_SERVER["HTTP_X_AUTHORIZATION"],
 	"cache-control: no-cache",
 	"pragma: no-cache",
 	"sec-ch-ua: \" Not A;Brand\";v=\"99\", \"Chromium\";v=\"92\"",
