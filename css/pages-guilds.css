@@ -1,0 +1,66 @@
+#pages-guilds .guild {
+	margin: 5px;
+	font-family: sans-serif;
+}
+
+#pages-guilds .guild summary {
+	cursor: pointer;
+	outline: none;
+	user-select: none;
+	font-weight: bold;
+}
+
+#pages-guilds .guild summary.details {
+	display: inline-flex;
+	align-items: center;
+	margin-bottom: 5px;
+}
+
+#pages-guilds .guild details summary::marker {
+	content: "+ ";
+	font-family: monospace;
+	font-size: 15px;
+}
+
+#pages-guilds .guild details[open] summary::marker {
+	content: "- ";
+}
+
+#pages-guilds .guild summary .icon {
+	border-radius: 25%;
+	height: 40px;
+	width: 40px;
+	margin-right: 5px;
+}
+
+#pages-guilds .guild summary .name {
+	font-size: 30px;
+}
+
+#pages-guilds .guild summary.group {
+	font-size: 15px;
+	text-transform: uppercase;
+	margin-bottom: 5px;
+}
+
+#pages-guilds .guild .channels details {
+	margin-bottom: 10px;
+}
+
+#pages-guilds .guild details {
+	font-size: 15px;
+}
+
+#pages-guilds .guild .channels a {
+	margin-left: 10px;
+	white-space: nowrap;
+}
+
+#pages-guilds .guild .channels {
+	margin-left: 10px;
+}
+
+#pages-guilds .guild .channel.ungrouped {
+	display: inline-block;
+	margin-bottom: 5px;
+}

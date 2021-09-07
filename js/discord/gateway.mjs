@@ -1,6 +1,6 @@
 const websocket_url = "wss://gateway.discord.gg/?encoding=json&v=9";
 
-export function gateway(parent) {
+export function gateway(parent, intents=0) {
 	//public
 	parent.state = {};
 
@@ -68,41 +68,45 @@ export function gateway(parent) {
 				await socket.send(heartbeat_string);
 				heartbeatInterval = setInterval(() => socket.send(heartbeat_string), data.d.heartbeat_interval);
 
-				socket.send(JSON.stringify({
-					op: 2,
-					d: {
-						"token": localStorage.authorization,
-						"capabilities": 125,
-						"properties": {
-							"os": "Windows",
-							"browser": "Chrome",
-							"device": "",
-							"browser_user_agent": parent.user_agent,
-							"browser_version": /Chrome\/(.*)\s/.exec(parent.user_agent)[1],
-							"os_version": "",
-							"referrer": "https://discord.com/login",
-							"referring_domain": "discord.com",
-							"referrer_current": "",
-							"referring_domain_current": "",
-							"release_channel": "stable",
-							"client_build_number": 95351,
-							"client_event_source": null
-						},
-						"presence": {
-							"status": "online",
-							"since": 0,
-							"activities": [],
-							"afk": false
-						},
-						"compress": false,
-						"client_state": {
-							"guild_hashes": {},
-							"highest_last_message_id": "0",
-							"read_state_version": 0,
-							"user_guild_settings_version": -1
+				{
+					const x = {
+						op: 2,
+						d: {
+							"token": localStorage.authorization,
+							"capabilities": 125,
+							"properties": {
+								"os": "Windows",
+								"browser": "Chrome",
+								"device": "",
+								"browser_user_agent": parent.user_agent,
+								"browser_version": /Chrome\/(.*)\s/.exec(parent.user_agent)[1],
+								"os_version": "",
+								"referrer": "https://discord.com/login",
+								"referring_domain": "discord.com",
+								"referrer_current": "",
+								"referring_domain_current": "",
+								"release_channel": "stable",
+								"client_build_number": 95351,
+								"client_event_source": null
+							},
+							"presence": {
+								"status": "online",
+								"since": 0,
+								"activities": [],
+								"afk": false
+							},
+							"compress": false,
+							"client_state": {
+								"guild_hashes": {},
+								"highest_last_message_id": "0",
+								"read_state_version": 0,
+								"user_guild_settings_version": -1
+							}
 						}
 					}
-				}));
+					if(intents) x["intents"] = intents;
+					socket.send(JSON.stringify(x));
+				}
 				break;
 
 			case 11:

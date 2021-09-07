@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html> <!-- Used by Github pages -->
 	<head>
-		<script>
-			window.onload = async () => {
-				window.discord = new (await import("./js/discord/index.mjs")).Discord();
-				discord.on("READY", async (s) => {
-					for(const x of discord.state.guilds) {
-						const guild = await discord.api.getGuildDetails(x.id);
-						const icon_src = await discord.api.getGuildIconURL(guild);
-						document.body.innerHTML += `<img src="${icon_src}"> ${guild.name}<br>`;
-					}
-				});
-			};
+		<link rel="stylesheet" href="css/pages-guilds.css">
+		<script type="module">
+			import Discord from "./js/discord/index.mjs";
+			import Pages from "./js/pages/index.mjs";
+
+			const discord = new Discord(localStorage.intents);
+			const pages = new Pages(discord);
+
+			discord.on("READY", async () => {
+				document.body.innerHTML = await pages.guilds(discord);
+			});
 		</script>
 	</head>
-	<body></body>
+	<body>Loading...</body>
 </html>
