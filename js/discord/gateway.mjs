@@ -1,6 +1,6 @@
 const websocket_url = "wss://gateway.discord.gg/?encoding=json&v=9";
 
-export function gateway(parent, intents=0) {
+export function gateway(parent, options) {
 	//public
 	parent.state = {};
 
@@ -15,11 +15,30 @@ export function gateway(parent, intents=0) {
 		for(const i in listeners[type]) listeners[type][i](...data);
 	};
 
+	this.tabIntoChannel = async (channel_object) => {
+		const sendable = {
+			"op": 14, //SECRET OP FOR ALLOWING EVENTS FROM BIG SERVERS
+			"d": {
+				guild_id: channel_object.guild_id,
+				typing: true,
+				threads: true,
+				activities: true,
+				members: [],
+				channels: {},
+				thread_member_lists: []
+
+			}
+		}
+		sendable.d.channels[channel_object.id] = [[0,99]];
+		socket.send(JSON.stringify(sendable));
+	};
+
 	this.send = async (x) => socket.send(JSON.stringify(x));
 
 	//private
 	const socket = new WebSocket(websocket_url);
 	let heartbeatInterval;
+	let last_sequence_no = null;
 
 	socket.onopen = (e) => {
 		if(heartbeatInterval) clearInterval(heartbeatInterval);
@@ -34,7 +53,8 @@ export function gateway(parent, intents=0) {
 	socket.onmessage = async (e) => {
 		const data = JSON.parse(e.data);
 
-		const heartbeat_string = JSON.stringify({op: 1, d: null});
+		if(data.s) last_sequence_no = data.s;
+
 		switch(data.op) {
 			case 0:
 				switch(data.t) {
@@ -47,6 +67,7 @@ export function gateway(parent, intents=0) {
 						this.dispatchEvent("READY", [parent.state]); //always seems to come after READY + fills in any gaps
 						break;
 
+					//add events here as a `case "x":`
 					case "MESSAGE_CREATE":
 						this.dispatchEvent(data.t, [data.d]);
 						break;
@@ -65,14 +86,13 @@ export function gateway(parent, intents=0) {
 				break;
 
 			case 10:
-				await socket.send(heartbeat_string);
-				heartbeatInterval = setInterval(() => socket.send(heartbeat_string), data.d.heartbeat_interval);
+				heartbeatInterval = setInterval(() => socket.send(JSON.stringify({op: 1, d: last_sequence_no})), data.d.heartbeat_interval);
 
 				{
 					const x = {
 						op: 2,
 						d: {
-							"token": localStorage.authorization,
+							"token": options.authorization,
 							"capabilities": 125,
 							"properties": {
 								"os": "Windows",
@@ -104,7 +124,7 @@ export function gateway(parent, intents=0) {
 							}
 						}
 					}
-					if(intents) x["intents"] = intents;
+					if(options.intents) x["intents"] = options.intents;
 					socket.send(JSON.stringify(x));
 				}
 				break;

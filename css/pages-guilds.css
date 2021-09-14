@@ -1,12 +1,11 @@
 #pages-guilds .guild {
 	margin: 5px;
-	font-family: sans-serif;
+	user-select: none;
 }
 
 #pages-guilds .guild summary {
 	cursor: pointer;
 	outline: none;
-	user-select: none;
 	font-weight: bold;
 }
 
@@ -37,7 +36,7 @@
 	font-size: 30px;
 }
 
-#pages-guilds .guild summary.group {
+#pages-guilds .guild .group summary {
 	font-size: 15px;
 	text-transform: uppercase;
 	margin-bottom: 5px;
@@ -60,7 +59,7 @@
 	margin-left: 10px;
 }
 
-#pages-guilds .guild .channel.ungrouped {
+#pages-guilds .guild .channel {
 	display: inline-block;
 	margin-bottom: 5px;
 }

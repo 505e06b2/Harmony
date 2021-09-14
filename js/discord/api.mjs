@@ -1,6 +1,6 @@
 const cdn_base_url = "https://cdn.discordapp.com/";
 
-export function api(parent) {
+export function api(parent, options) {
 	this.getGuildDetails = async (guild_id) => await this.raw(`guilds/${guild_id}`);
 	this.getGuildChannels = async (guild_id) => await this.raw(`guilds/${guild_id}/channels`);
 	this.getGuildIconURL = async (guild_object, format = "png") => `${cdn_base_url}icons/${guild_object.id}/${guild_object.icon}.${format}`;
@@ -17,12 +17,17 @@ export function api(parent) {
 			method: method,
 			headers: Object.assign({
 				"x-user-agent": this.user_agent,
-				"x-authorization": localStorage.authorization
+				"x-authorization": options.authorization
 			}, headers),
 			body: body,
 			mode: "cors",
 			cache: "no-cache"
 		});
+		if(1) { //debug
+			const text = await r.json();
+			console.log(text);
+			return text;//JSON.parse(text);
+		}
 		return await r.json(); //no need for text()?
 	};
 }

@@ -37,6 +37,7 @@ $headers = [ //needs to be mutable so content-type can be added when needed
 $ch = curl_init(BASE_URL . $_SERVER["QUERY_STRING"]);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HEADER, false);
+
 switch($_SERVER["REQUEST_METHOD"]) {
 	case "GET":
 		break;
@@ -44,12 +45,13 @@ switch($_SERVER["REQUEST_METHOD"]) {
 	case "POST":
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input")); //get this streamable?, at least for POST
-		$headers[] = "content-type: " . empty($_SERVER["HTTP_X_CONTENT_TYPE"]) ? "application/json" : $_SERVER["HTTP_X_CONTENT_TYPE"]; //bypass CORS with x-*
+		$headers[] = "content-type: " . (empty($_SERVER["HTTP_X_CONTENT_TYPE"]) ? "application/json" : $_SERVER["HTTP_X_CONTENT_TYPE"]); //bypass CORS with x-*
 		break;
 
 	default:
 		die('{"code": 0, "message": "HTTP method not supported"}');
 }
+
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER["HTTP_X_USER_AGENT"]);
 

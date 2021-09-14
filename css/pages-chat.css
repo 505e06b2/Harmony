@@ -1,0 +1,106 @@
+#pages-chat {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	font-family: sans-serif;
+
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	margin: 0px;
+	width: 100%;
+	height: 100%;
+
+	font-size: var(--font-size);
+	line-height: var(--line-height);
+
+	background: var(--bg);
+	color: var(--font-colour);
+}
+
+#pages-chat a {
+	color: var(--link-colour);
+}
+
+#pages-chat a:visited {
+	color: var(--link-colour-visited);
+}
+
+#pages-chat .messages {
+	flex: 0 1000 100%;
+	overflow-y: scroll;
+}
+
+#pages-chat .messages::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+}
+
+#pages-chat .messages::-webkit-scrollbar-track {
+	background: var(--scrollbar-bg);
+}
+
+#pages-chat .messages::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-fg);
+}
+
+#pages-chat .messages .message {
+	display: flex;
+	border-top: var(--message-border-top);
+}
+
+#pages-chat .messages .message .timestamp {
+	flex: 0 0;
+	vertical-align: top;
+	opacity: 0.5;
+	height: 100%;
+	padding-right: 5px;
+	font-family: monospace;
+	font-size: 75%;
+}
+
+#pages-chat .messages .message > .contents {
+	flex: 1 1;
+	display: inline-block;
+	overflow-wrap: anywhere; /*single char string with no spaces or hyphens beats this, but word-break: break-all is unreadable...*/
+}
+
+#pages-chat .messages .message > .contents .greentext {
+	color: var(--greentext-colour);
+}
+
+#pages-chat .messages .message > .contents .redtext {
+	color: var(--redtext-colour);
+}
+
+#pages-chat .composer {
+	word-break: break-all;
+	outline: none;
+	padding: 10px;
+	min-height: var(--line-height);
+	max-height: calc(var(--line-height) * 10);
+	overflow-y: auto;
+
+	background: var(--input-bg);
+	border-top: var(--input-border-top);
+	color: var(--font-colour);
+}
+
+#pages-chat .composer:empty:before{
+	content: "Message #" attr(channel-name);
+	color: var(--font-colour);
+	opacity: 0.5;
+}
+
+
+#pages-chat .composer::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+}
+
+#pages-chat .composer::-webkit-scrollbar-track {
+	background: var(--input-scrollbar-bg);
+}
+
+#pages-chat .composer::-webkit-scrollbar-thumb {
+    background: var(--input-scrollbar-fg);
+}

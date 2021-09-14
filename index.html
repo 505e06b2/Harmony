@@ -1,18 +1,13 @@
 <!DOCTYPE html>
 <html> <!-- Used by Github pages -->
 	<head>
+		<meta charset="utf8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Harmony</title>
+		<link rel="icon" type="image/png" href="">
+		<link rel="stylesheet" href="css/style.css">
 		<link rel="stylesheet" href="css/pages-guilds.css">
-		<script type="module">
-			import Discord from "./js/discord/index.mjs";
-			import Pages from "./js/pages/index.mjs";
-
-			const discord = new Discord(localStorage.intents);
-			const pages = new Pages(discord);
-
-			discord.on("READY", async () => {
-				document.body.innerHTML = await pages.guilds(discord);
-			});
-		</script>
+		<script type="module" src="js/main.mjs"></script>
 	</head>
-	<body>Loading...</body>
+	<body class="dark-theme">Loading...</body>
 </html>
