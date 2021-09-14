@@ -124,7 +124,7 @@ export function gateway(parent, options) {
 							}
 						}
 					}
-					if(options.intents) x["intents"] = options.intents;
+					if(options.intents) x.d["intents"] = options.intents;
 					socket.send(JSON.stringify(x));
 				}
 				break;

@@ -23,11 +23,6 @@ export function api(parent, options) {
 			mode: "cors",
 			cache: "no-cache"
 		});
-		if(1) { //debug
-			const text = await r.json();
-			console.log(text);
-			return text;//JSON.parse(text);
-		}
 		return await r.json(); //no need for text()?
 	};
 }

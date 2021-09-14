@@ -1,7 +1,12 @@
 export async function guilds(link_onclick, window_object = null) {
 	const joined_guilds = [];
+
+	//user token || bot token
+	const guild_list = this.discord.state.user_settings.guild_positions || this.discord.state.guilds;
+
 	//start up async requests
-	for(const id of this.discord.state.user_settings.guild_positions) {
+	for(const x of guild_list) {
+		const id = x.id || x; //bot token || user token
 		joined_guilds.push({
 			details: this.discord.api.getGuildDetails(id),
 			channels: this.discord.api.getGuildChannels(id)

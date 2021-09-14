@@ -45,7 +45,7 @@ if(options.authorization) {
 			open_tabs[element.channel_object.id].focus(); //doesn't work in Vivaldi, but probably should?
 			return;
 		}
-		discord.gateway.tabIntoChannel(element);
+		if(options.authorization.startsWith("Bot ") !== true) discord.gateway.tabIntoChannel(element);
 		const html = (await(await fetch(location.href)).text()).replace(/<script.*?>.*?<\/script>/gm, ""); //strip all JS
 		const tab = window.open();
 		tab.document.write(html);
