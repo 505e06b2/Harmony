@@ -55,7 +55,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
 			if($_SERVER["HTTP_X_CONTENT_TYPE"] == "multipart/form-data") {
 				preg_match("/--(.*?)$/m", $in, $matches);
 				$headers[] = "content-type: multipart/form-data; boundary=" . $matches[1];
-				die(var_dump($headers));
+				die(var_dump($in));
 			} else {
 				$headers[] = "content-type: " . $_SERVER["HTTP_X_CONTENT_TYPE"];
 			}
