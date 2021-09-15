@@ -42,11 +42,22 @@ switch($_SERVER["REQUEST_METHOD"]) {
 	case "GET":
 		break;
 
-	case "POST":
+	case "POST": {
+		$in = file_get_contents("php://input");
 		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input")); //get this streamable?, at least for POST
-		$headers[] = "content-type: " . (empty($_SERVER["HTTP_X_CONTENT_TYPE"]) ? "application/json" : $_SERVER["HTTP_X_CONTENT_TYPE"]); //bypass CORS with x-*
-		break;
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $in);
+
+		if(isset($_SERVER["HTTP_X_CONTENT_TYPE"])) {
+			if($_SERVER["HTTP_X_CONTENT_TYPE"] == "multipart/form-data") {
+				preg_match("/--(.*?)$/m", $in, $matches);
+				$headers[] = "content-type: multipart/form-data; boundary=" . $matches[1];
+			} else {
+				$headers[] = "content-type: " . $_SERVER["HTTP_X_CONTENT_TYPE"];
+			}
+		} else {
+			$headers[] = "content-type: application/json";
+		}
+	} break;
 
 	default:
 		die('{"code": 0, "message": "HTTP method not supported"}');

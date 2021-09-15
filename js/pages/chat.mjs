@@ -1,6 +1,8 @@
 let messages_container;
 let inputbox;
 
+//WINDOW_OBJECT IS JUST WEIRD.
+
 function scrollMessagesAfter(callback = () => undefined) {
 	if(!messages_container) return;
 	const maxScrollValue = () => messages_container.scrollHeight - messages_container.clientHeight;
@@ -110,7 +112,7 @@ export async function chat(channel, window_object = null) {
 				case "Enter":
 					if(!e.shiftKey) { //enter still = newline, just only with shift held
 						e.preventDefault();
-						this.discord.api.send(channel.id, inputbox.innerText);
+						this.discord.api.sendMessage(channel.id, inputbox.innerText);
 						inputbox.innerText = "";
 						messages_container.scrollTop = messages_container.scrollHeight;
 					}
@@ -125,7 +127,12 @@ export async function chat(channel, window_object = null) {
 		inputbox.onpaste = (e) => {
 			e.stopPropagation();
 			e.preventDefault();
-			document.execCommand("insertText", false, e.clipboardData.getData("Text"));
+
+			if(e.clipboardData.files[0]) {
+				discord.api.sendFileMessage(channel.id, e.clipboardData.files[0]);
+			} else {
+				window_object.document.execCommand("insertText", false, e.clipboardData.getData("text")); // :(
+			}
 			return true;
 		};
 

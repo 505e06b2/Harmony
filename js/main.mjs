@@ -38,6 +38,7 @@ window.onunload = () => {
 if(options.authorization) {
 	document.title = "Loading... | Harmony";
 	const discord = new Discord(options);
+	window.discord = discord; //console usable
 	const pages = new Pages(discord);
 
 	async function onChannelClick(element) {
