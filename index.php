@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL);
 //This file is used by Heroku
 const BASE_URL = "https://discord.com/api/v9/";
 
