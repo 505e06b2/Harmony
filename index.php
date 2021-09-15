@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL);
+error_reporting(E_ALL); ini_set("display_errors", 1);
 //This file is used by Heroku
 const BASE_URL = "https://discord.com/api/v9/";
 
