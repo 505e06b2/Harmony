@@ -1,21 +1,18 @@
 import Discord from "./discord/index.mjs";
-import Pages from "./pages/index.mjs";
 
-const open_tabs = {}; //key = channel id, value = tab's Window
+window.open_tabs = {}; //key = channel id, value = tab's Window
 
 //set up options
-{
-	const options = {};
-	for(const [key, value] of Object.entries(localStorage)) {
-		try {
-			options[key] = JSON.parse(value);
-		} catch {
-			console.error(`options[${key}] is not JSON parsable`);
-		}
+window.options = {};
+for(const [key, value] of Object.entries(localStorage)) {
+	try {
+		options[key] = JSON.parse(value);
+	} catch {
+		console.error(`options[${key}] is not JSON parsable`);
 	}
-	window.options = options; //accessible in global scope
 }
 
+//window events
 window.onbeforeunload = () => {
 	localStorage.clear();
 	for(const [key, value] of Object.entries(options)) {
@@ -31,62 +28,11 @@ window.onunload = () => {
 //set up DOM + page
 if(options.authorization) {
 	document.title = "Loading... | Harmony";
-	const discord = new Discord(options);
-	const pages = new Pages(discord);
-
-	window.discord = discord; //console usable
-
-	async function onChannelClick(element) {
-		if(open_tabs[element.channel_object.id] && open_tabs[element.channel_object.id].closed !== true) {
-			open_tabs[element.channel_object.id].focus(); //doesn't work in Vivaldi, but probably should?
-			return;
-		}
-		if(options.authorization.startsWith("Bot ") !== true) discord.gateway.tabIntoChannel(element);
-		const html = (await(await fetch(location.href)).text()).replace(/<script.*?>.*?<\/script>/gm, ""); //strip all JS
-		const tab = window.open("blank.html");
-
-		tab.onload = async () => {
-			tab.document.querySelector('link[rel="icon"]').href = await discord.api.getGuildIconURL(element.guild_object);
-			tab.document.head.append(pages.createElement("link", {rel: "stylesheet", href: "css/pages-chat.css"}));
-			tab.document.title = `#${element.channel_object.name} / ${element.guild_object.name}`;
-			const chat_body = await pages.chat(element.channel_object, tab); //added with guilds.mjs
-			tab.document.body.innerHTML = "";
-			tab.document.body.append(chat_body);
-			tab.onunload = () => {
-				tab.close();
-				delete open_tabs[element.channel_object.id];
-			}
-		}
-
-		open_tabs[element.channel_object.id] = tab;
-	}
+	window.discord = new Discord(options);
 
 	discord.on("READY", async () => {
 		document.title = `${discord.state.user.username}#${discord.state.user.discriminator} | Harmony`;
-
-		const pages_guilds = await pages.guilds(onChannelClick);
-		if(!options.guild_open_states) options.guild_open_states = {};
-		for(const x of pages_guilds.querySelectorAll('details.guild')) {
-			x.ontoggle = () => options.guild_open_states[x.id] = x.open;
-			x.open = options.guild_open_states[x.id] || false;
-		}
-
-		if(!options.channel_group_open_states) options.channel_group_open_states = {};
-		for(const x of pages_guilds.querySelectorAll('details.group')) {
-			x.ontoggle = () => options.channel_group_open_states[x.id] = x.open;
-			x.open = (options.channel_group_open_states[x.id] === false) ? false : true;
-		}
-
-		document.body.innerHTML = "";
-		document.body.append(pages.createElement("header", {},
-			discord.state.user.username + "#" + discord.state.user.discriminator,
-			pages.createElement("a", {
-				href: "#Logout",
-				onclick: () => {options = {}; location.reload(); return false},
-				style: "font-size: 50%; float:right",
-				innerText: "Logout"
-			})
-		), pages_guilds);
+		addPageToDOM("guilds");
 	});
 
 	discord.on("MESSAGE_CREATE", async (message) => {

@@ -1,8 +1,6 @@
 let messages_container;
 let inputbox;
 
-//WINDOW_OBJECT IS JUST WEIRD.
-
 function scrollMessagesAfter(callback = () => undefined) {
 	if(!messages_container) return;
 	const maxScrollValue = () => messages_container.scrollHeight - messages_container.clientHeight;
@@ -91,87 +89,74 @@ function appendMessage(message) {
 	});
 }
 
-export async function chat(channel, window_object = null) {
-	const container = this.createElement("span", {id: "pages-chat"});
+(async () => {
+	const container = createElement("span", {id: "pages-chat"});
 
-	const messages = await this.discord.api.getMessages(channel.id);
+	const messages = await discord.api.getMessages(channel.id);
 	messages_container = document.createElement("div");
 	messages_container.className = "messages";
 	for(const x of messages.reverse()) {
 		appendMessage(x);
 	}
 
-	inputbox = document.createElement("div"); //global
-		inputbox.contentEditable = true;
-		inputbox.className = "composer";
-		inputbox.setAttribute("channel-name", channel.name);
-		//inputbox.placeholder = "Message..."; done via CSS now
-		inputbox.onkeydown = (e) => {
+	inputbox = createElement("div", {
+		contentEditable: true,
+		className: "composer",
+		oninput: (e) => {
+			messages_container.scrollTop = messages_container.scrollHeight;
+		},
+		onkeydown: (e) => {
 			e.stopPropagation();
 			switch(e.key) {
 				case "Enter":
 					if(!e.shiftKey) { //enter still = newline, just only with shift held
 						e.preventDefault();
-						this.discord.api.sendMessage(channel.id, inputbox.innerText);
+						discord.api.sendMessage(channel.id, inputbox.innerText);
 						inputbox.innerText = "";
 						messages_container.scrollTop = messages_container.scrollHeight;
 					}
 					break;
 			}
-		};
-
-		inputbox.oninput = (e) => {
-			messages_container.scrollTop = messages_container.scrollHeight;
-		};
-
-		inputbox.onpaste = (e) => {
+		},
+		onpaste: (e) => {
 			e.stopPropagation();
 			e.preventDefault();
 
 			if(e.clipboardData.files[0]) {
 				discord.api.sendFileMessage(channel.id, e.clipboardData.files[0]);
 			} else {
-				window_object.document.execCommand("insertText", false, e.clipboardData.getData("text")); // :(
+				window.document.execCommand("insertText", false, e.clipboardData.getData("text")); // :(
 			}
 			return true;
-		};
+		}
+	}); //global
+
+	inputbox.setAttribute("channel-name", channel.name);
+	//inputbox.placeholder = "Message..."; done via CSS now
 
 	container.append(messages_container, inputbox);
 
-	if(window_object) {
-		window_object.appendMessage = appendMessage; //used by event
+	document.body.innerHTML = "";
+	document.body.append(container);
+	messages_container.scrollTop = messages_container.scrollHeight;
+	inputbox.focus();
 
-		//software keyboard appears
-		window_object.onresize = () => {
-			if(messages_container) messages_container.scrollTop = messages_container.scrollHeight;
-		};
+	//events
 
-		window_object.onkeydown = (e) => {
-			if(!inputbox || e.ctrlKey) return;
-			inputbox.focus();
-			document.execCommand("selectAll", false, null);
-			document.getSelection().collapseToEnd();
-			inputbox.dispatchEvent(new e.constructor(e.type, e));
-		};
+	//software keyboard appears
+	window.onresize = () => {
+		if(messages_container) messages_container.scrollTop = messages_container.scrollHeight;
+	};
 
-		const onloadObserver = new MutationObserver((mutationsList, observer) => {
-			for(const mutation of mutationsList) {
-				switch(mutation.type) {
-					case "childList":
-						messages_container.scrollTop = messages_container.scrollHeight;
-						inputbox.focus();
-						onloadObserver.disconnect();
-						break;
-				}
-			};
-		});
-		onloadObserver.observe(window_object.document.body, {childList: true});
+	window.onkeydown = (e) => {
+		if(!inputbox || e.ctrlKey) return;
+		inputbox.focus();
+		document.execCommand("selectAll", false, null);
+		document.getSelection().collapseToEnd();
+		inputbox.dispatchEvent(new e.constructor(e.type, e));
+	};
 
-		window_object.onfocus = () => {
-			inputbox.focus();
-		}
+	window.onfocus = () => {
+		inputbox.focus();
 	}
-	return container;
-}
-
-export default chat;
+})();
