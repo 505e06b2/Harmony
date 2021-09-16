@@ -3,12 +3,6 @@ import Pages from "./pages/index.mjs";
 
 const open_tabs = {}; //key = channel id, value = tab's Window
 
-setInterval(() => { //can't get onunload/onbeforeunload/onclose events to work in Vivaldi
-	for(const [id, tab] of Object.entries(open_tabs)) {
-		if(tab.closed) delete open_tabs[id];
-	}
-}, 1000);
-
 //set up options
 {
 	const options = {};
@@ -38,8 +32,9 @@ window.onunload = () => {
 if(options.authorization) {
 	document.title = "Loading... | Harmony";
 	const discord = new Discord(options);
-	window.discord = discord; //console usable
 	const pages = new Pages(discord);
+
+	window.discord = discord; //console usable
 
 	async function onChannelClick(element) {
 		if(open_tabs[element.channel_object.id] && open_tabs[element.channel_object.id].closed !== true) {
@@ -48,15 +43,21 @@ if(options.authorization) {
 		}
 		if(options.authorization.startsWith("Bot ") !== true) discord.gateway.tabIntoChannel(element);
 		const html = (await(await fetch(location.href)).text()).replace(/<script.*?>.*?<\/script>/gm, ""); //strip all JS
-		const tab = window.open();
-		tab.document.write(html);
-		tab.document.head.append(pages.createElement("link", {rel: "stylesheet", href: "css/pages-chat.css"}));
-		tab.document.title = `#${element.channel_object.name} / ${element.guild_object.name}`;
-		tab.document.querySelector('link[rel="icon"]').href = await discord.api.getGuildIconURL(element.guild_object);
+		const tab = window.open("blank.html");
 
-		const chat_body = await pages.chat(element.channel_object, tab); //added with guilds.mjs
-		tab.document.body.innerHTML = "";
-		tab.document.body.append(chat_body);
+		tab.onload = async () => {
+			tab.document.querySelector('link[rel="icon"]').href = await discord.api.getGuildIconURL(element.guild_object);
+			tab.document.head.append(pages.createElement("link", {rel: "stylesheet", href: "css/pages-chat.css"}));
+			tab.document.title = `#${element.channel_object.name} / ${element.guild_object.name}`;
+			const chat_body = await pages.chat(element.channel_object, tab); //added with guilds.mjs
+			tab.document.body.innerHTML = "";
+			tab.document.body.append(chat_body);
+			tab.onunload = () => {
+				tab.close();
+				delete open_tabs[element.channel_object.id];
+			}
+		}
+
 		open_tabs[element.channel_object.id] = tab;
 	}
 
