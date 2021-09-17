@@ -112,7 +112,6 @@ for(const x of guild_list) {
 				if(group.channels.length === 0) continue;
 
 				const details = createElement("details", {
-						open: true,
 						className: "group",
 						id: group_id,
 						open: (options.channel_group_open_states[group_id] === false) ? false : true,

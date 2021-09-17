@@ -73,6 +73,12 @@
 	color: var(--redtext-colour);
 }
 
+#pages-chat .messages .message > .contents .attachments {
+	word-break: break-all;
+}
+
+
+
 #pages-chat .composer {
 	word-break: break-all;
 	outline: none;
@@ -89,6 +95,7 @@
 #pages-chat .composer:empty:before{
 	content: "Message #" attr(channel-name);
 	color: var(--font-colour);
+	cursor: text;
 	opacity: 0.5;
 }
 

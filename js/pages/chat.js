@@ -10,13 +10,6 @@ function scrollMessagesAfter(callback = () => undefined) {
 	return ret;
 }
 
-function createSpan(className, callback) {
-	const e = document.createElement("span");
-	if(className) e.className = className;
-	if(callback) callback(e);
-	return e;
-}
-
 function parseMessage(text) {
 	if(text.startsWith("https://tenor.com/view/")) return; //9gag go home
 	text = text.replace(/<a?[@:#].*?>\s*/gm, "");//no mentions, no cross-server emoji
@@ -44,57 +37,57 @@ function appendMessage(message) {
 	if(!parsed_contents && !message.attachments.length) return; //no content at all
 
 	scrollMessagesAfter(() => {
-		const elem = document.createElement("div");
-			elem.id = message.id;
-			elem.className = "message";
-			elem.setAttribute("timestamp", message.timestamp);
+		const elem = createElement("div", {id: message.id, className: "message"});
+		elem.setAttribute("timestamp", message.timestamp);
 
-			const contents = document.createElement("span");
-			contents.className = "contents";
-			contents.append(
-				createSpan("username", (x) => {
-						x.innerText = " " + message.author.username + " "; //so double click will work on username
-						x.title = message.author.id;
-						x.style.color = `hsl(${parseInt(message.author.id)%360}, 100%, var(--username-hsl-brightness))`;
-					}),
-
-				createSpan("text", (x) => x.innerHTML = parsed_contents)
+			const contents = createElement("span", {className: "contents"},
+				createElement("span", {
+					className: "username",
+					innerText: " " + message.author.username + " ", //so double click will work on username
+					title: message.author.id,
+					style: `color: hsl(${parseInt(message.author.id)%360}, 100%, var(--username-hsl-brightness))`
+				}),
+				createElement("span", {
+					className: "text",
+					innerHTML: (parsed_contents) ? parsed_contents + "<br>" : ""
+				})
 			);
 
-			if(message.attachments) {
-				const attachments_elem = document.createElement("div");
-				attachments_elem.className = "attachments";
-				for(const x of message.attachments) {
-					const a_tag = document.createElement("a");
-					a_tag.className = "attachment";
-					a_tag.innerText = "Attachment";//typeOfAttachmentFromExtension(x.filename);
-					a_tag.title = x.filename;
-					a_tag.href = x.url;
-					a_tag.target = "_blank";
-					attachments_elem.append(a_tag);
-				}
-				contents.append(attachments_elem);
+			if(message.attachments.length === 1) { //more than 1 = malicious bot :)
+				const x = message.attachments[0];
+				contents.append(
+					createElement("span", {className: "attachments"},
+						//"File: ",
+						createElement("a", {
+							className: "attachment",
+							innerText: x.filename,//"Attachment", //typeOfAttachmentFromExtension(x.filename);
+							title: x.filename,
+							href: x.url,
+							target: "_blank"
+						})
+					)
+				);
 			}
 
+			const date_obj = new Date(message.timestamp);
 			elem.append(
-				createSpan("timestamp", (x) => {
-					const date_obj = new Date(message.timestamp);
-					x.innerText = "[" + new Intl.DateTimeFormat(navigator.language, {timeStyle: "short"}).format(date_obj) + "]";
-					x.title = new Intl.DateTimeFormat(navigator.language, {dateStyle: "full", timeStyle: "medium"}).format(date_obj);
+				createElement("span", {
+					className: "timestamp",
+					innerText: "[" + (""+date_obj.getHours()).padStart(2, '0') + ":" + (""+date_obj.getMinutes()).padStart(2, '0') + "]",
+					title: new Intl.DateTimeFormat(navigator.language, {dateStyle: "full", timeStyle: "medium"}).format(date_obj)
 				}),
-
 				contents
 			);
 		messages_container.append(elem);
 	});
 }
 
+//main
 (async () => {
 	const container = createElement("span", {id: "pages-chat"});
 
 	const messages = await discord.api.getMessages(channel.id);
-	messages_container = document.createElement("div");
-	messages_container.className = "messages";
+	messages_container = createElement("div", {className: "messages"});
 	for(const x of messages.reverse()) {
 		appendMessage(x);
 	}
@@ -149,7 +142,7 @@ function appendMessage(message) {
 	};
 
 	window.onkeydown = (e) => {
-		if(!inputbox || e.ctrlKey) return;
+		if(!inputbox || e.ctrlKey || document.activeElement === inputbox) return;
 		inputbox.focus();
 		document.execCommand("selectAll", false, null);
 		document.getSelection().collapseToEnd();
